@@ -1,30 +1,32 @@
 FROM --platform=linux/amd64 ubuntu:jammy
 
-ARG flutter_version
+USER root
 
-ENV ANDROID_SDK_ROOT=/opt/android-sdk-linux \
-    LANG=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    FLUTTER_HOME=/root/sdks/flutter \
-    FLUTTER_ROOT=$FLUTTER_HOME \
-    FLUTTER_VERSION=$flutter_version \
-    FIREBASE_INSTALL_DIR=/usr/local/bin
+ARG flutter_version=3.32.8
 
-ENV PATH ${PATH}:${FLUTTER_HOME}/bin:${FLUTTER_HOME}/bin/cache/dart-sdk/bin
+ENV ANDROID_SDK_ROOT=/opt/android-sdk-linux
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV FLUTTER_HOME=${HOME}/sdks/flutter
+ENV FLUTTER_ROOT=$FLUTTER_HOME
+ENV FLUTTER_VERSION=$flutter_version
+ENV FIREBASE_INSTALL_DIR=/usr/local/bin
+
+ENV PATH=${PATH}:${FLUTTER_HOME}/bin:${FLUTTER_HOME}/bin/cache/dart-sdk/bin
 
 ENV PATH=${PATH}:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin
 
 # comes from https://developer.android.com/studio/
-ENV ANDROID_SDK_TOOLS_VERSION 11076708
+ENV ANDROID_SDK_TOOLS_VERSION=13114758
 
 
 # comes from https://github.com/firebase/firebase-tools/releases
-ENV FIREBASE_VERSION=v13.3.0
+ENV FIREBASE_VERSION=v14.12.0
 
 RUN cd /opt \
     && apt update \
-    && apt install -y openjdk-19-jdk \
+    && apt install -y openjdk-21-jdk \
     && apt install ca-certificates-java \
     && apt install -y sudo wget zip unzip git openssh-client curl software-properties-common build-essential ruby-full ruby-bundler lib32stdc++6 libstdc++6 libpulse0 libglu1-mesa locales lcov --no-install-recommends \
     # for x86 emulators
@@ -52,5 +54,6 @@ RUN sudo mkdir -p "$FIREBASE_INSTALL_DIR" \
     && sudo chmod +rx "$FIREBASE_INSTALL_DIR/firebase"
 
 # Install Flutter
-RUN git clone --branch ${FLUTTER_VERSION} https://github.com/flutter/flutter.git ${FLUTTER_HOME} && \
-    flutter doctor
+RUN git clone --depth 1 --branch ${FLUTTER_VERSION} https://github.com/flutter/flutter.git ${FLUTTER_HOME}
+
+RUN flutter doctor
