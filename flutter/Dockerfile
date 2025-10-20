@@ -2,7 +2,7 @@ FROM --platform=linux/amd64 ubuntu:jammy
 
 USER root
 
-ARG flutter_version=3.32.8
+ARG flutter_version
 
 ENV ANDROID_SDK_ROOT=/opt/android-sdk-linux
 ENV LANG=en_US.UTF-8

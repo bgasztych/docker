@@ -9,4 +9,8 @@ fi
 
 docker login --username $DOCKER_USER_NAME --password $DOCKER_PASSWORD
 
-docker buildx build --push --tag zavenco/flutter:${FLUTTER_VERSION/+/-} --platform=linux/arm64,linux/amd64 .
+docker buildx build --tag zavenco/flutter:${FLUTTER_VERSION/+/-} \
+             --build-arg flutter_version=$FLUTTER_VERSION \
+             --platform=linux/arm64,linux/amd64 \
+             --push
+             .
